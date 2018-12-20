@@ -70,6 +70,7 @@
 #include "devAS7263.h"
 #include "devSSD1331.h"
 #include "devINA219.h"
+#include "devMPU6050.h"
 
 #define					kWarpConstantStringI2cFailure		"\rI2C failed, reg 0x%02x, code %d\n"
 #define					kWarpConstantStringErrorInvalidVoltage	"\rInvalid supply voltage [%d] mV!"
@@ -96,6 +97,7 @@ volatile WarpUARTDeviceState		devicePAN1323ETUState;
 volatile WarpI2CDeviceState		deviceAS7262State;
 volatile WarpI2CDeviceState		deviceAS7263State;
 volatile WarpI2CDeviceState		deviceINA219currentState;
+volatile WarpI2CDeviceState		deviceMPU6050State;
 
 /*
  *	TODO: move this and possibly others into a global structure
@@ -1059,6 +1061,7 @@ main(void)
 	initAS7262(	0x49	/* i2cAddress */,	&deviceAS7262State	);
 	initAS7263(	0x49	/* i2cAddress */,	&deviceAS7263State	);
 	initINA219current( 	0x40    /* i2cAddress */, 	&deviceINA219currentState	);
+	initMPU6050(	0X68	/* i2cAddress */, 	&deviceMPU6050State	);
 
 
 	/*
