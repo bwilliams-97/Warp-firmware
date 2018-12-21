@@ -1105,15 +1105,31 @@ main(void)
 	SEGGER_RTT_WriteString(0, "Time delay finished \n");
 	
 	/* This is where we will insert OLED driver code */
-	devSSD1331init();
+	//devSSD1331init();
 
 	SEGGER_RTT_WriteString(0, "We made it this far 4");
 	
 	//int a;
 	enableI2Cpins(menuI2cPullupValue);
 	//for(a=0; a<10; a++){
-	WarpStatus newvar1 = readSensorRegisterINA219(0x04);
-	WarpStatus newvar2 = readSensorRegisterINA219(0x04);
+	//WarpStatus newvar1 = readSensorRegisterINA219(0x04);
+	//WarpStatus newvar2 = readSensorRegisterINA219(0x04);
+	for (int a=0; a<10; a++){
+	WarpStatus testvar = readSensorRegisterMPU6050(0x3B); // Read X accel H byte
+	WarpStatus testvar2 = readSensorRegisterMPU6050(0x3C);
+	WarpStatus testvar3 = readSensorRegisterMPU6050(0x3D);
+	WarpStatus testvar4 = readSensorRegisterMPU6050(0x3E);
+	WarpStatus testvar5 = readSensorRegisterMPU6050(0x3F);
+	WarpStatus testvar6 = readSensorRegisterMPU6050(0x40);
+	WarpStatus testvar7 = readSensorRegisterMPU6050(0x43); // Gyro data
+	WarpStatus testvar8 = readSensorRegisterMPU6050(0x44);
+	WarpStatus testvar9 = readSensorRegisterMPU6050(0x45);
+	WarpStatus testvar10 = readSensorRegisterMPU6050(0x46);
+	WarpStatus testvar11 = readSensorRegisterMPU6050(0x47);
+	WarpStatus testvar12 = readSensorRegisterMPU6050(0x48);
+	WarpStatus testsend = writeSensorRegisterMPU6050(0x1B, 0x10);
+	WarpStatus testrec  = readSensorRegisterMPU6050(0x1B);
+	}
 	disableI2Cpins();
 	//}
 

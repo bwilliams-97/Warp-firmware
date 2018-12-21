@@ -555,6 +555,33 @@ home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMMA8451Q.c.s:
 	$(MAKE) -f CMakeFiles/Warp.dir/build.make CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMMA8451Q.c.s
 .PHONY : home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMMA8451Q.c.s
 
+home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.obj: home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.obj
+
+.PHONY : home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.obj
+
+# target to build an object file
+home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.obj:
+	$(MAKE) -f CMakeFiles/Warp.dir/build.make CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.obj
+.PHONY : home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.obj
+
+home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.i: home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.i
+
+.PHONY : home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.i
+
+# target to preprocess a source file
+home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.i:
+	$(MAKE) -f CMakeFiles/Warp.dir/build.make CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.i
+.PHONY : home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.i
+
+home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.s: home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.s
+
+.PHONY : home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.s
+
+# target to generate assembly for a file
+home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.s:
+	$(MAKE) -f CMakeFiles/Warp.dir/build.make CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.s
+.PHONY : home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.s
+
 home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devPAN1326.obj: home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devPAN1326.c.obj
 
 .PHONY : home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devPAN1326.obj
@@ -945,6 +972,9 @@ help:
 	@echo "... home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMMA8451Q.obj"
 	@echo "... home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMMA8451Q.i"
 	@echo "... home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMMA8451Q.s"
+	@echo "... home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.obj"
+	@echo "... home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.i"
+	@echo "... home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.s"
 	@echo "... home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devPAN1326.obj"
 	@echo "... home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devPAN1326.i"
 	@echo "... home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devPAN1326.s"

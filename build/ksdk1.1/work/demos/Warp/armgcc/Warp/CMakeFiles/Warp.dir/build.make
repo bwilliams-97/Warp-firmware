@@ -745,6 +745,30 @@ CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/d
 CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devINA219.c.obj.provides.build: CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devINA219.c.obj
 
 
+CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.obj: CMakeFiles/Warp.dir/flags.make
+CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.obj: /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/armgcc/Warp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_30) "Building C object CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.obj"
+	/usr/bin/arm-none-eabi-gcc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.obj   -c /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c
+
+CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.i"
+	/usr/bin/arm-none-eabi-gcc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c > CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.i
+
+CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.s"
+	/usr/bin/arm-none-eabi-gcc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c -o CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.s
+
+CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.obj.requires:
+
+.PHONY : CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.obj.requires
+
+CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.obj.provides: CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.obj.requires
+	$(MAKE) -f CMakeFiles/Warp.dir/build.make CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.obj.provides.build
+.PHONY : CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.obj.provides
+
+CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.obj.provides.build: CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.obj
+
+
 # Object files for target Warp
 Warp_OBJECTS = \
 "CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/platform/utilities/src/fsl_misc_utilities.c.obj" \
@@ -775,7 +799,8 @@ Warp_OBJECTS = \
 "CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/platform/startup/MKL03Z4/system_MKL03Z4.c.obj" \
 "CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/platform/startup/startup.c.obj" \
 "CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/boards/Warp/gpio_pins.c.obj" \
-"CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devINA219.c.obj"
+"CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devINA219.c.obj" \
+"CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.obj"
 
 # External object files for target Warp
 Warp_EXTERNAL_OBJECTS =
@@ -809,10 +834,11 @@ release/Warp.elf: CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/wor
 release/Warp.elf: CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/platform/startup/startup.c.obj
 release/Warp.elf: CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/boards/Warp/gpio_pins.c.obj
 release/Warp.elf: CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devINA219.c.obj
+release/Warp.elf: CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.obj
 release/Warp.elf: CMakeFiles/Warp.dir/build.make
 release/Warp.elf: ../../../../lib/ksdk_platform_lib/armgcc/KL03Z4/release/libksdk_platform.a
 release/Warp.elf: CMakeFiles/Warp.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/armgcc/Warp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_30) "Linking C executable release/Warp.elf"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/armgcc/Warp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_31) "Linking C executable release/Warp.elf"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/Warp.dir/link.txt --verbose=$(VERBOSE)
 	/usr/bin/arm-none-eabi-objcopy -Oihex /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/armgcc/Warp/release/Warp.elf /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/armgcc/Warp/release/Warp.hex
 	/usr/bin/arm-none-eabi-objcopy -Obinary /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/armgcc/Warp/release/Warp.elf /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/armgcc/Warp/release/Warp.bin
@@ -852,6 +878,7 @@ CMakeFiles/Warp.dir/requires: CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build
 CMakeFiles/Warp.dir/requires: CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/platform/startup/startup.c.obj.requires
 CMakeFiles/Warp.dir/requires: CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/boards/Warp/gpio_pins.c.obj.requires
 CMakeFiles/Warp.dir/requires: CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devINA219.c.obj.requires
+CMakeFiles/Warp.dir/requires: CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.obj.requires
 
 .PHONY : CMakeFiles/Warp.dir/requires
 

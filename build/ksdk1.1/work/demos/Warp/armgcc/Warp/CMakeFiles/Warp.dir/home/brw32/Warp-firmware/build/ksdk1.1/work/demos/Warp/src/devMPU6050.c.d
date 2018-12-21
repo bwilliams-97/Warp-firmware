@@ -1,5 +1,5 @@
-CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/warp-kl03-ksdk1.1-boot.c.obj: \
- /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/warp-kl03-ksdk1.1-boot.c \
+CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.obj: \
+ /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c \
  /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/armgcc/Warp/../../../../platform/utilities/inc/fsl_misc_utilities.h \
  /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/armgcc/Warp/../../../../platform/CMSIS/Include/device/fsl_device_registers.h \
  /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/armgcc/Warp/../../../../platform/CMSIS/Include/device/MKL03Z4/MKL03Z4.h \
@@ -38,26 +38,7 @@ CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/w
  /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/armgcc/Warp/../../../../boards/Warp/gpio_pins.h \
  /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/SEGGER_RTT.h \
  /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/SEGGER_RTT_Conf.h \
- /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/warp.h \
- /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devBMX055.h \
- /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devADXL362.h \
- /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMMA8451Q.h \
- /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devLPS25H.h \
- /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devHDC1000.h \
- /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMAG3110.h \
- /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devSI7021.h \
- /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devL3GD20H.h \
- /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devBME680.h \
- /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devTCS34725.h \
- /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devSI4705.h \
- /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devCCS811.h \
- /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devAMG8834.h \
- /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devPAN1326.h \
- /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devAS7262.h \
- /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devAS7263.h \
- /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devSSD1331.h \
- /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devINA219.h \
- /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.h
+ /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/warp.h
 
 /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/armgcc/Warp/../../../../platform/utilities/inc/fsl_misc_utilities.h:
 
@@ -136,41 +117,3 @@ CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/w
 /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/SEGGER_RTT_Conf.h:
 
 /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/warp.h:
-
-/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devBMX055.h:
-
-/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devADXL362.h:
-
-/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMMA8451Q.h:
-
-/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devLPS25H.h:
-
-/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devHDC1000.h:
-
-/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMAG3110.h:
-
-/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devSI7021.h:
-
-/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devL3GD20H.h:
-
-/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devBME680.h:
-
-/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devTCS34725.h:
-
-/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devSI4705.h:
-
-/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devCCS811.h:
-
-/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devAMG8834.h:
-
-/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devPAN1326.h:
-
-/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devAS7262.h:
-
-/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devAS7263.h:
-
-/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devSSD1331.h:
-
-/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devINA219.h:
-
-/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.h:

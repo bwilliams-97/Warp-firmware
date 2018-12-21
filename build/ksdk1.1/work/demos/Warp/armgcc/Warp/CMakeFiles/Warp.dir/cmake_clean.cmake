@@ -28,6 +28,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/platform/startup/startup.c.obj"
   "CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/boards/Warp/gpio_pins.c.obj"
   "CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devINA219.c.obj"
+  "CMakeFiles/Warp.dir/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c.obj"
   "release/Warp.elf.pdb"
   "release/Warp.elf"
 )

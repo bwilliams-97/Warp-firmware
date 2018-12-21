@@ -93,7 +93,7 @@ WarpStatus readSensorRegisterMPU6050(uint8_t deviceRegister){
 
 WarpStatus writeSensorRegisterMPU6050(uint8_t deviceRegister, uint8_t register_data){ /* Write function for configuration of accel and gyro*/
 	uint8_t 	cmdBuf[1]	= {0xFF};
-	uint8_t		txBuf[1]	= {0x00};
+	uint8_t		txBuf[1]	= {0xFF};
 	i2c_status_t			returnValue;
 
 	i2c_device_t slave = 
@@ -101,38 +101,15 @@ WarpStatus writeSensorRegisterMPU6050(uint8_t deviceRegister, uint8_t register_d
 		.address = deviceMPU6050State.i2cAddress,
 		.baudRate_kbps = gWarpI2cBaudRateKbps
 	};
-	
-        cmdBuf[0] = 0x6B;
-	// Set the power management register
 
-        returnValue = I2C_DRV_MasterSendDataBlocking(
-                                                        0 /* I2C peripheral instance */,
-                                                        &slave,
-                                                        cmdBuf,
-                                                        1,
-                                                        txBuf,
-                                                        1,
-                                                        500 /* Timeout in ms*/);
-
-        // First write a 1 to the relevant register
-        cmdBuf[0] = deviceRegister;
-        txBuf[0]  = 0x01;
-        returnValue = I2C_DRV_MasterSendDataBlocking(
-                                                        0 /* I2C peripheral instance */,
-                                                        &slave,
-                                                        cmdBuf,
-                                                        1,
-                                                        txBuf,
-                                                        1,
-                                                        500 /* Timeout in ms*/);
-
-	cmdBuf[0] = deviceRegister;
 	txBuf[0] = register_data;
+	cmdBuf[0] = deviceRegister;
+
 	returnValue = I2C_DRV_MasterSendDataBlocking(
 							0 /*I2C peripheral instance*/,
 							&slave,
-							NULL,
-							0,
+							cmdBuf,
+							1,
 							txBuf,
 							1,
 							100 /*timeout in ms*/);	

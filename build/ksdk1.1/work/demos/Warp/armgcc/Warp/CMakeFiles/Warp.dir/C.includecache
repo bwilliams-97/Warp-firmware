@@ -1200,6 +1200,36 @@ warp.h
 
 /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMMA8451Q.h
 
+/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.c
+stdlib.h
+-
+fsl_misc_utilities.h
+/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/fsl_misc_utilities.h
+fsl_device_registers.h
+/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/fsl_device_registers.h
+fsl_i2c_master_driver.h
+/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/fsl_i2c_master_driver.h
+fsl_spi_master_driver.h
+/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/fsl_spi_master_driver.h
+fsl_rtc_driver.h
+/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/fsl_rtc_driver.h
+fsl_clock_manager.h
+/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/fsl_clock_manager.h
+fsl_power_manager.h
+/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/fsl_power_manager.h
+fsl_mcglite_hal.h
+/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/fsl_mcglite_hal.h
+fsl_port_hal.h
+/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/fsl_port_hal.h
+gpio_pins.h
+/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/gpio_pins.h
+SEGGER_RTT.h
+/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/SEGGER_RTT.h
+warp.h
+/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/warp.h
+
+/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.h
+
 /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devPAN1326.c
 stdlib.h
 -
@@ -1405,6 +1435,8 @@ devSSD1331.h
 /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devSSD1331.h
 devINA219.h
 /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devINA219.h
+devMPU6050.h
+/home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/devMPU6050.h
 
 /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/warp-kl03-ksdk1.1-powermodes.c
 stdint.h
