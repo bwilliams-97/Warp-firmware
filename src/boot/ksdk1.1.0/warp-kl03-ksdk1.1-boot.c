@@ -14,7 +14,7 @@
 	*	Redistributions in binary form must reproduce the above
 		copyright notice, this list of conditions and the following
 		disclaimer in the documentation and/or other materials
-		provided with the distribution.
+		provided with the distribution.:q
 
 	*	Neither the name of the author nor the names of its
 		contributors may be used to endorse or promote products
@@ -37,6 +37,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include "fsl_misc_utilities.h"
 #include "fsl_device_registers.h"
@@ -1114,21 +1115,51 @@ main(void)
 	//for(a=0; a<10; a++){
 	//WarpStatus newvar1 = readSensorRegisterINA219(0x04);
 	//WarpStatus newvar2 = readSensorRegisterINA219(0x04);
+	
+	WarpStatus accelConfig = writeSensorRegisterMPU6050(0x1C, 0x08); // Set accelerometer dynamic range to +- 4g
+	WarpStatus accelConfigCheck = readSensorRegisterMPU6050(0x1C); // Check accelerometer range correctly set
+
+	WarpStatus gyroConfig = writeSensorRegisterMPU6050(0x1B, 0x18); // Set gyroscope dynamic range to +-2000 degrees/s
+	WarpStatus gyroConfigCheck = readSensorRegisterMPU6050(0x1B); // Check gyroscope dynamic range correctly set
+
 	for (int a=0; a<10; a++){
-	WarpStatus testvar = readSensorRegisterMPU6050(0x3B); // Read X accel H byte
-	WarpStatus testvar2 = readSensorRegisterMPU6050(0x3C);
-	WarpStatus testvar3 = readSensorRegisterMPU6050(0x3D);
-	WarpStatus testvar4 = readSensorRegisterMPU6050(0x3E);
-	WarpStatus testvar5 = readSensorRegisterMPU6050(0x3F);
-	WarpStatus testvar6 = readSensorRegisterMPU6050(0x40);
-	WarpStatus testvar7 = readSensorRegisterMPU6050(0x43); // Gyro data
-	WarpStatus testvar8 = readSensorRegisterMPU6050(0x44);
-	WarpStatus testvar9 = readSensorRegisterMPU6050(0x45);
-	WarpStatus testvar10 = readSensorRegisterMPU6050(0x46);
-	WarpStatus testvar11 = readSensorRegisterMPU6050(0x47);
-	WarpStatus testvar12 = readSensorRegisterMPU6050(0x48);
-	WarpStatus testsend = writeSensorRegisterMPU6050(0x1B, 0x10);
-	WarpStatus testrec  = readSensorRegisterMPU6050(0x1B);
+	/* Read accelerometer registers */
+	WarpStatus X_high_stat, uint8_t X_acc_H  = readSensorRegisterMPU6050(0x3B); 
+	WarpStatus X_low_stat, uint8_t X_acc_L = readSensorRegisterMPU6050(0x3C);
+	WarpStatus Y_high_stat, uint8_t Y_acc_H = readSensorRegisterMPU6050(0x3D);
+	WarpStatus Y_low_stat, uint8_t Y_acc_L = readSensorRegisterMPU6050(0x3E);
+	WarpStatus Z_high_stat, uint8_t Z_acc_H = readSensorRegisterMPU6050(0x3F);
+	WarpStatus Z_low_stat, uint8_t Z_acc_L = readSensorRegisterMPU6050(0x40);
+	
+	/* Read gyro registers */
+	WarpStatus Xg_high_stat, uint8_t X_gyro_H = readSensorRegisterMPU6050(0x43); 
+	WarpStatus Xg_low_stat, uint8_t X_gyro_L = readSensorRegisterMPU6050(0x44);
+	WarpStatus Yg_high_stat, uint8_t Y_gyro_H = readSensorRegisterMPU6050(0x45);
+	WarpStatus Yg_low_stat, uint8_t Y_gyro_L = readSensorRegisterMPU6050(0x46);
+	WarpStatus Zg_high_stat, uint8_t Z_gyro_H = readSensorRegisterMPU6050(0x47);
+	WarpStatus Zg_low_stat, uint8_t Z_gyro_L = readSensorRegisterMPU6050(0x48);
+	
+	/* Combine low and high bytes */
+	int16_t X_accel = (X_acc_H << 8 )| X_acc_L;
+        int16_t Y_accel = (Y_acc_H << 8 )| Y_acc_L;
+        int16_t Z_accel = (Z_acc_H << 8 )| Z_acc_L;
+	int16_t X_rate = (X_gyro_H << 8) | X_gyro_L;
+        int16_t Y_rate = (Y_gyro_H << 8) | Y_gyro_L;
+        int16_t Z_rate = (Z_gyro_H << 8) | Z_gyro_L;
+
+	/* Convert gyroscope readings to degrees per second*/
+	float X_rate_final = (float)X_rate/16.4;
+	float Y_rate_final = (float)Y_rate/16.4;
+	float Z_rate_final = (float)Z_rate/16.4;
+
+	/* Find estimated tilt from accelerometer*/
+	float x_rot = atan2(-Y_accel/(X_accel*X_accel + Z_accel*Z_accel));
+	float y_rot = atan2(X_accel /(Y_accel*Y_accel + Z_accel*Z_accel));
+
+	/* Convert from radians to degrees*/	
+	x_rot = x_rot*180.0/3.1416;
+	y_rot = y_rot*180.0/3.1416;
+
 	}
 	disableI2Cpins();
 	//}
