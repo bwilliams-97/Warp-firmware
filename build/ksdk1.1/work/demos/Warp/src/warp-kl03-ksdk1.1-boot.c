@@ -1124,13 +1124,17 @@ main(void)
 	uint8_t gyro_reg = readSensorRegisterMPU6050(0x1B); // Check gyroscope dynamic range correctly set */
 
 	// Initialise Kalman filter terms
-	float dt = 0.1; float P[2][2] = {{0.0,0.0},{0.0,0.0}}; float y; float S; 
+	float dt = 0.526; float P[2][2] = {{0.0,0.0},{0.0,0.0}}; float y; float S; 
 	float K[2] = {0.0, 0.0}; float bias = 0.0; float angle = 0.0;
-	
+	float Q_angle = 0.001; float Q_gyroBias = 0.003; float R_measure = 0.03;
+
 	// Time per iteration
 	clock_t before = clock();
 	
 	for (int a=0; a<1000; a++){
+
+	SEGGER_RTT_printf(0, "\rIteration: %d\n", a);
+
 	/* Read accelerometer registers */
 	uint8_t X_acc_H = readSensorRegisterMPU6050(0x3B); 
 	uint8_t X_acc_L = readSensorRegisterMPU6050(0x3C);
@@ -1197,15 +1201,15 @@ main(void)
                 Z_rate_n = (int)Z_rate;
         }
 
-	SEGGER_RTT_printf(0, "\rX_accel is %04x, Y_accel is %04x, Z_accel is %04x\n", X_accel, Y_accel, Z_accel);
-	SEGGER_RTT_printf(0, "\rX_accel is %d, Y_accel is %d, Z_accel is %d\n", X_accel_n, Y_accel_n, Z_accel_n);
+//	SEGGER_RTT_printf(0, "\rX_accel is %04x, Y_accel is %04x, Z_accel is %04x\n", X_accel, Y_accel, Z_accel);
+//	SEGGER_RTT_printf(0, "\rX_accel is %d, Y_accel is %d, Z_accel is %d\n", X_accel_n, Y_accel_n, Z_accel_n);
 
 	/* Convert gyroscope readings to degrees per second SCALED BY 100*/
 	int X_rate_final = X_rate_n*1000/1311; // Scale factor of 131.072
 	int Y_rate_final = Y_rate_n*1000/1311;
 	int Z_rate_final = Z_rate_n*1000/1311;
 	
-	SEGGER_RTT_printf(0, "\rX_rate in hex is %04x", X_rate);
+//	SEGGER_RTT_printf(0, "\rX_rate in hex is %04x", X_rate);
 	SEGGER_RTT_printf(0, "\rX_rate in deg/s is %d\n", X_rate_final);
 
 	/* Find estimated tilt from accelerometer*/
@@ -1215,7 +1219,7 @@ main(void)
 	int x_rotation = (int)(x_rot*100);
 	int y_rotation = (int)(y_rot*100);
 
-	SEGGER_RTT_printf(0, "\rX_ROT in radians is %d, Y_ROT in radians is %d\n", x_rotation, y_rotation);
+//	SEGGER_RTT_printf(0, "\rX_ROT in radians is %d, Y_ROT in radians is %d\n", x_rotation, y_rotation);
 
 	/* Convert from radians to degrees*/	
 	x_rotation = (int)(x_rot*572);
@@ -1265,7 +1269,10 @@ main(void)
 	P[1][0] -= K[1]*p00_inter;
 	P[1][1] -= K[1]*p01_inter;
 	
-	SEGGER_RTT_WriteString(0, "\rFinished loop\n");	
+	int angle_int = (int)(angle);
+	int angle_reading_int = (int)(x_rot*57.2);
+	int bias_int = (int)(bias);
+	SEGGER_RTT_printf(0, "\rAngle reading = %d, Angle estimate = %d, Bias estimate = %d\n", angle_reading_int, angle_int, bias_int);
 	}
 
 	disableI2Cpins();
