@@ -85,10 +85,10 @@ WarpStatus readSensorRegisterMPU6050(uint8_t deviceRegister){
 	//	SEGGER_RTT_printf(0, kWarpConstantStringI2CFailure, cmdBuf[0], returnValue);
 		SEGGER_RTT_printf(0, "\r[0x%02x]        0x%02x\n", cmdBuf[0], deviceMPU6050State.i2cBuffer[0]);
 		SEGGER_RTT_WriteString(0, "Didn't work\n");
-		return kWarpStatusDeviceCommunicationFailed;
+		return 0xFF;
 	}
 
-	return kWarpStatusOK;
+	return deviceMPU6050State.i2cBuffer[0];
 }
 
 WarpStatus writeSensorRegisterMPU6050(uint8_t deviceRegister, uint8_t register_data){ /* Write function for configuration of accel and gyro*/

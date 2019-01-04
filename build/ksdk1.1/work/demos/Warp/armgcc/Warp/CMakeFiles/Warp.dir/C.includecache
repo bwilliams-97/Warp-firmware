@@ -1375,6 +1375,10 @@ stdlib.h
 -
 string.h
 -
+math.h
+-
+time.h
+-
 fsl_misc_utilities.h
 /home/brw32/Warp-firmware/build/ksdk1.1/work/demos/Warp/src/fsl_misc_utilities.h
 fsl_device_registers.h

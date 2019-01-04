@@ -38,6 +38,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
 #include "fsl_misc_utilities.h"
 #include "fsl_device_registers.h"
@@ -1045,22 +1046,22 @@ main(void)
 	/*
 	 *	Initialize all the sensors
 	 */
-	initBMX055accel(0x18	/* i2cAddress */,	&deviceBMX055accelState	);
-	initBMX055gyro(	0x68	/* i2cAddress */,	&deviceBMX055gyroState	);
-	initBMX055mag(	0x10	/* i2cAddress */,	&deviceBMX055magState	);
-	initMMA8451Q(	0x1D	/* i2cAddress */,	&deviceMMA8451QState	);	
-	initLPS25H(	0x5C	/* i2cAddress */,	&deviceLPS25HState	);
-	initHDC1000(	0x43	/* i2cAddress */,	&deviceHDC1000State	);
-	initMAG3110(	0x0E	/* i2cAddress */,	&deviceMAG3110State	);
-	initSI7021(	0xFF 	/* fake i2cAddress */,	&deviceSI7021State	);
-	initL3GD20H(	0x6A	/* i2cAddress */,	&deviceL3GD20HState	);
-	initBME680(	0x77	/* i2cAddress */,	&deviceBME680State	);
-	initTCS34725(	0x29	/* i2cAddress */,	&deviceTCS34725State	);
-	initSI4705(	0x11	/* i2cAddress */,	&deviceSI4705State	);
-	initCCS811(	0x5A	/* i2cAddress */,	&deviceCCS811State	);
-	initAMG8834(	0x3A	/* i2cAddress */,	&deviceAMG8834State	);
-	initAS7262(	0x49	/* i2cAddress */,	&deviceAS7262State	);
-	initAS7263(	0x49	/* i2cAddress */,	&deviceAS7263State	);
+//	initBMX055accel(0x18	/* i2cAddress */,	&deviceBMX055accelState	);
+//	initBMX055gyro(	0x68	/* i2cAddress */,	&deviceBMX055gyroState	);
+//	initBMX055mag(	0x10	/* i2cAddress */,	&deviceBMX055magState	);
+//	initMMA8451Q(	0x1D	/* i2cAddress */,	&deviceMMA8451QState	);	
+//	initLPS25H(	0x5C	/* i2cAddress */,	&deviceLPS25HState	);
+//	initHDC1000(	0x43	/* i2cAddress */,	&deviceHDC1000State	);
+//	initMAG3110(	0x0E	/* i2cAddress */,	&deviceMAG3110State	);
+//	initSI7021(	0xFF 	/* fake i2cAddress */,	&deviceSI7021State	);
+//	initL3GD20H(	0x6A	/* i2cAddress */,	&deviceL3GD20HState	);
+//	initBME680(	0x77	/* i2cAddress */,	&deviceBME680State	);
+//	initTCS34725(	0x29	/* i2cAddress */,	&deviceTCS34725State	);
+//	initSI4705(	0x11	/* i2cAddress */,	&deviceSI4705State	);
+//	initCCS811(	0x5A	/* i2cAddress */,	&deviceCCS811State	);
+//	initAMG8834(	0x3A	/* i2cAddress */,	&deviceAMG8834State	);
+//	initAS7262(	0x49	/* i2cAddress */,	&deviceAS7262State	);
+//	initAS7263(	0x49	/* i2cAddress */,	&deviceAS7263State	); 
 	initINA219current( 	0x40    /* i2cAddress */, 	&deviceINA219currentState	);
 	initMPU6050(	0X68	/* i2cAddress */, 	&deviceMPU6050State	);
 
@@ -1116,51 +1117,158 @@ main(void)
 	//WarpStatus newvar1 = readSensorRegisterINA219(0x04);
 	//WarpStatus newvar2 = readSensorRegisterINA219(0x04);
 	
-	WarpStatus accelConfig = writeSensorRegisterMPU6050(0x1C, 0x08); // Set accelerometer dynamic range to +- 4g
-	WarpStatus accelConfigCheck = readSensorRegisterMPU6050(0x1C); // Check accelerometer range correctly set
+/*	WarpStatus accelConfig = writeSensorRegisterMPU6050(0x1C, 0x08); // Set accelerometer dynamic range to +- 4g
+	uint8_t accel_reg = readSensorRegisterMPU6050(0x1C); // Check accelerometer range correctly set
 
 	WarpStatus gyroConfig = writeSensorRegisterMPU6050(0x1B, 0x18); // Set gyroscope dynamic range to +-2000 degrees/s
-	WarpStatus gyroConfigCheck = readSensorRegisterMPU6050(0x1B); // Check gyroscope dynamic range correctly set
+	uint8_t gyro_reg = readSensorRegisterMPU6050(0x1B); // Check gyroscope dynamic range correctly set */
 
-	for (int a=0; a<10; a++){
+	// Initialise Kalman filter terms
+	float dt = 0.526; float P[2][2] = {{0.0,0.0},{0.0,0.0}}; float y; float S; 
+	float K[2] = {0.0, 0.0}; float bias = 0.0; float angle = 0.0;
+	
+	// Time per iteration
+	clock_t before = clock();
+	
+	for (int a=0; a<1000; a++){
 	/* Read accelerometer registers */
-	WarpStatus X_high_stat, uint8_t X_acc_H  = readSensorRegisterMPU6050(0x3B); 
-	WarpStatus X_low_stat, uint8_t X_acc_L = readSensorRegisterMPU6050(0x3C);
-	WarpStatus Y_high_stat, uint8_t Y_acc_H = readSensorRegisterMPU6050(0x3D);
-	WarpStatus Y_low_stat, uint8_t Y_acc_L = readSensorRegisterMPU6050(0x3E);
-	WarpStatus Z_high_stat, uint8_t Z_acc_H = readSensorRegisterMPU6050(0x3F);
-	WarpStatus Z_low_stat, uint8_t Z_acc_L = readSensorRegisterMPU6050(0x40);
+	uint8_t X_acc_H = readSensorRegisterMPU6050(0x3B); 
+	uint8_t X_acc_L = readSensorRegisterMPU6050(0x3C);
+	uint8_t Y_acc_H = readSensorRegisterMPU6050(0x3D);
+	uint8_t Y_acc_L = readSensorRegisterMPU6050(0x3E);
+	uint8_t Z_acc_H = readSensorRegisterMPU6050(0x3F);
+	uint8_t Z_acc_L = readSensorRegisterMPU6050(0x40);
 	
 	/* Read gyro registers */
-	WarpStatus Xg_high_stat, uint8_t X_gyro_H = readSensorRegisterMPU6050(0x43); 
-	WarpStatus Xg_low_stat, uint8_t X_gyro_L = readSensorRegisterMPU6050(0x44);
-	WarpStatus Yg_high_stat, uint8_t Y_gyro_H = readSensorRegisterMPU6050(0x45);
-	WarpStatus Yg_low_stat, uint8_t Y_gyro_L = readSensorRegisterMPU6050(0x46);
-	WarpStatus Zg_high_stat, uint8_t Z_gyro_H = readSensorRegisterMPU6050(0x47);
-	WarpStatus Zg_low_stat, uint8_t Z_gyro_L = readSensorRegisterMPU6050(0x48);
+	uint8_t X_gyro_H = readSensorRegisterMPU6050(0x43); 
+	uint8_t X_gyro_L = readSensorRegisterMPU6050(0x44);
+	uint8_t Y_gyro_H = readSensorRegisterMPU6050(0x45);
+	uint8_t Y_gyro_L = readSensorRegisterMPU6050(0x46);
+	uint8_t Z_gyro_H = readSensorRegisterMPU6050(0x47);
+	uint8_t Z_gyro_L = readSensorRegisterMPU6050(0x48);
 	
 	/* Combine low and high bytes */
-	int16_t X_accel = (X_acc_H << 8 )| X_acc_L;
-        int16_t Y_accel = (Y_acc_H << 8 )| Y_acc_L;
-        int16_t Z_accel = (Z_acc_H << 8 )| Z_acc_L;
-	int16_t X_rate = (X_gyro_H << 8) | X_gyro_L;
-        int16_t Y_rate = (Y_gyro_H << 8) | Y_gyro_L;
-        int16_t Z_rate = (Z_gyro_H << 8) | Z_gyro_L;
+	uint16_t X_accel = (X_acc_H << 8 )| X_acc_L;
+        uint16_t Y_accel = (Y_acc_H << 8 )| Y_acc_L;
+        uint16_t Z_accel = (Z_acc_H << 8 )| Z_acc_L;
+	uint16_t X_rate = (X_gyro_H << 8) | X_gyro_L;
+        uint16_t Y_rate = (Y_gyro_H << 8) | Y_gyro_L;
+        uint16_t Z_rate = (Z_gyro_H << 8) | Z_gyro_L;
+	
+	/* Convert to signed integers */
+	/*int X_accel_n = (int)X_accel;
+	int Y_accel_n = (int)Y_accel;
+	int Z_accel_n = (int)Z_accel;
+	int X_rate_n = (int)X_rate;
+	int Y_rate_n = (int)Y_rate;
+	int Z_rate_n = (int)Z_rate; */
+	int X_accel_n; int Y_accel_n; int Z_accel_n;
+	int X_rate_n; int Y_rate_n; int Z_rate_n;
+	
+	/* Convert from twos complement*/
+	if(X_accel > 32768){
+		X_accel_n = (int)(-(65535-X_accel));
+	} else {
+		X_accel_n = (int)X_accel;
+	}
+     	if(Y_accel > 32768){
+                Y_accel_n = (int)(-(65535-Y_accel));
+        } else {
+                Y_accel_n = (int)Y_accel;
+        }
+	if(Z_accel > 32768){
+                Z_accel_n = (int)(-(65535-Z_accel));
+        } else {
+                Z_accel_n = (int)Z_accel;
+        }
+	if(X_rate > 32768){
+                X_rate_n = (int)(-(65535-X_rate));
+        } else {
+                X_rate_n = (int)X_rate;
+        }
+	if(Y_rate > 32768){
+                Y_rate_n = (int)(-(65535-Y_rate));
+        } else {
+                Y_rate_n = (int)Y_rate;
+        }
+	if(Z_rate > 32768){
+                Z_rate_n = (int)(-(65535-Z_rate));
+        } else {
+                Z_rate_n = (int)Z_rate;
+        }
 
-	/* Convert gyroscope readings to degrees per second*/
-	float X_rate_final = (float)X_rate/16.4;
-	float Y_rate_final = (float)Y_rate/16.4;
-	float Z_rate_final = (float)Z_rate/16.4;
+	SEGGER_RTT_printf(0, "\rX_accel is %04x, Y_accel is %04x, Z_accel is %04x\n", X_accel, Y_accel, Z_accel);
+	SEGGER_RTT_printf(0, "\rX_accel is %d, Y_accel is %d, Z_accel is %d\n", X_accel_n, Y_accel_n, Z_accel_n);
+
+	/* Convert gyroscope readings to degrees per second SCALED BY 100*/
+	int X_rate_final = X_rate_n*1000/1311; // Scale factor of 131.072
+	int Y_rate_final = Y_rate_n*1000/1311;
+	int Z_rate_final = Z_rate_n*1000/1311;
+	
+	SEGGER_RTT_printf(0, "\rX_rate in hex is %04x", X_rate);
+	SEGGER_RTT_printf(0, "\rX_rate in deg/s is %d\n", X_rate_final);
 
 	/* Find estimated tilt from accelerometer*/
-	float x_rot = atan2(-Y_accel/(X_accel*X_accel + Z_accel*Z_accel));
-	float y_rot = atan2(X_accel /(Y_accel*Y_accel + Z_accel*Z_accel));
+	double x_rot = atan2((double)(-Y_accel_n), sqrt((double)(X_accel_n*X_accel_n + Z_accel_n*Z_accel_n)));
+	double y_rot = atan2((double)(X_accel_n) , sqrt((double)(Y_accel_n*Y_accel_n + Z_accel_n*Z_accel_n)));
+	
+	int x_rotation = (int)(x_rot*100);
+	int y_rotation = (int)(y_rot*100);
+
+	SEGGER_RTT_printf(0, "\rX_ROT in radians is %d, Y_ROT in radians is %d\n", x_rotation, y_rotation);
 
 	/* Convert from radians to degrees*/	
-	x_rot = x_rot*180.0/3.1416;
-	y_rot = y_rot*180.0/3.1416;
+	x_rotation = (int)(x_rot*572);
+	y_rotation = (int)(y_rot*572);
+	
+	// SEGGER_RTT_printf(0, "\rX_ROT in degrees is %d\n", x_rotation);
 
+	// NOW carry out Kalman filter operations
+	// Step 0 - declare uncertainties
+	float Q_angle = 0.001;
+	float Q_gyroBias = 0.003;
+	float R_measure = 0.03;
+	
+	float gyroRate = (float)X_rate_final/100;
+	float newAngle = (float)x_rot*57.2;
+
+	// Step 1 - predict new angle
+	float rate = gyroRate - bias;
+	angle += dt*rate;
+
+	// Step 2 - update P
+	P[0][0] = dt*(dt*P[1][1] - P[0][1] - P[1][0] + Q_angle);
+	P[0][1] -= dt*P[1][1];
+	P[1][0] -= dt*P[1][1];
+	P[1][1] += Q_gyroBias*dt;
+	
+	// Step 3 - calculate innovation
+	y = newAngle - angle;
+
+	// Step 4 - update S
+	S = P[0][0] + R_measure;
+
+	// Step 5 - update Kalman gain
+	K[0] = P[0][0]/S;
+	K[1] = P[1][0]/S;
+
+	// Step 6 - update angle and bias based on Kalman gain and innovation
+	angle += K[0]*y;
+	bias += K[1]*y;
+
+	// Step 7 - final update of P based on Kalman gain
+	float p00_inter = P[0][0];
+	float p01_inter = P[0][1];
+
+	P[0][0] -= K[0]*p00_inter;
+	P[0][1] -= K[0]*p01_inter;
+	P[1][0] -= K[1]*p00_inter;
+	P[1][1] -= K[1]*p01_inter;
+	
+	angle_int = int(angle*100);
+	SEGGER_RTT_printf(0, "Angle estimate = %d", angle_int);
 	}
+
 	disableI2Cpins();
 	//}
 
