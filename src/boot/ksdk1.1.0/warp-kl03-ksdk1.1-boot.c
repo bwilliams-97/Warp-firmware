@@ -1046,22 +1046,6 @@ main(void)
 	/*
 	 *	Initialize all the sensors
 	 */
-//	initBMX055accel(0x18	/* i2cAddress */,	&deviceBMX055accelState	);
-//	initBMX055gyro(	0x68	/* i2cAddress */,	&deviceBMX055gyroState	);
-//	initBMX055mag(	0x10	/* i2cAddress */,	&deviceBMX055magState	);
-//	initMMA8451Q(	0x1D	/* i2cAddress */,	&deviceMMA8451QState	);	
-//	initLPS25H(	0x5C	/* i2cAddress */,	&deviceLPS25HState	);
-//	initHDC1000(	0x43	/* i2cAddress */,	&deviceHDC1000State	);
-//	initMAG3110(	0x0E	/* i2cAddress */,	&deviceMAG3110State	);
-//	initSI7021(	0xFF 	/* fake i2cAddress */,	&deviceSI7021State	);
-//	initL3GD20H(	0x6A	/* i2cAddress */,	&deviceL3GD20HState	);
-//	initBME680(	0x77	/* i2cAddress */,	&deviceBME680State	);
-//	initTCS34725(	0x29	/* i2cAddress */,	&deviceTCS34725State	);
-//	initSI4705(	0x11	/* i2cAddress */,	&deviceSI4705State	);
-//	initCCS811(	0x5A	/* i2cAddress */,	&deviceCCS811State	);
-//	initAMG8834(	0x3A	/* i2cAddress */,	&deviceAMG8834State	);
-//	initAS7262(	0x49	/* i2cAddress */,	&deviceAS7262State	);
-//	initAS7263(	0x49	/* i2cAddress */,	&deviceAS7263State	); 
 	initINA219current( 	0x40    /* i2cAddress */, 	&deviceINA219currentState	);
 	initMPU6050(	0X68	/* i2cAddress */, 	&deviceMPU6050State	);
 
@@ -1111,26 +1095,26 @@ main(void)
 
 	SEGGER_RTT_WriteString(0, "We made it this far 4");
 	
-	//int a;
-	enableI2Cpins(menuI2cPullupValue);
-	//for(a=0; a<10; a++){
-	//WarpStatus newvar1 = readSensorRegisterINA219(0x04);
-	//WarpStatus newvar2 = readSensorRegisterINA219(0x04);
-	
-/*	WarpStatus accelConfig = writeSensorRegisterMPU6050(0x1C, 0x08); // Set accelerometer dynamic range to +- 4g
-	uint8_t accel_reg = readSensorRegisterMPU6050(0x1C); // Check accelerometer range correctly set
 
-	WarpStatus gyroConfig = writeSensorRegisterMPU6050(0x1B, 0x18); // Set gyroscope dynamic range to +-2000 degrees/s
-	uint8_t gyro_reg = readSensorRegisterMPU6050(0x1B); // Check gyroscope dynamic range correctly set */
+	enableI2Cpins(menuI2cPullupValue);
 
 	// Initialise Kalman filter terms
-	float dt = 0.526; float P[2][2] = {{0.0,0.0},{0.0,0.0}}; float y; float S; // dt was measured manually
-	float K[2] = {0.0, 0.0}; float bias = 0.0; float angle = 0.0;
-	float Q_angle = 0.001; float Q_gyroBias = 0.003; float R_measure = 0.03;
+	float dt = 0.526; float P[2][2] = {{3.0,0.0},{0.0,3.0}}; float innovation; float S; // dt was measured manually
+	float K[2] = {0.0, 0.0}; float state_bias = 0.0; float state_angle = 0.0;
+
+	// Declare uncertainties. Q is the process noise covariance matrix and is assumed to be diagonal. R is the observation noise covariance.
+	float Q_angle = 0.0007; float Q_gyroBias = 0.003; float R_measure = 0.001;
+
 
 	for (int a=0; a<1000; a++){
 
 	SEGGER_RTT_printf(0, "\rIteration: %d\n", a);
+
+	/* Check calibration settings*/
+	uint8_t gyroCalib = readSensorRegisterMPU6050(0x1B);
+	uint8_t accelCalib = readSensorRegisterMPU6050(0x1C);
+	uint8_t powerMgmt = readSensorRegisterMPU6050(0x6B);
+	uint8_t powerMgmt2 = readSensorRegisterMPU6050(0x6C);
 
 	/* Read accelerometer registers */
 	uint8_t X_acc_H = readSensorRegisterMPU6050(0x3B); 
@@ -1160,76 +1144,77 @@ main(void)
 	int X_rate_n; int Y_rate_n; int Z_rate_n;
 	
 	/* Convert from twos complement to signed integer*/
-	if(X_accel > 32768){
-		X_accel_n = (int)(-(65535-X_accel));
+	if(X_accel >= 32768){
+		X_accel_n = (int)(-(65535-X_accel)+1);
 	} else {
 		X_accel_n = (int)X_accel;
 	}
-     	if(Y_accel > 32768){
-                Y_accel_n = (int)(-(65535-Y_accel));
+     	if(Y_accel >= 32768){
+                Y_accel_n = (int)(-(65535-Y_accel)+1);
         } else {
                 Y_accel_n = (int)Y_accel;
         }
-	if(Z_accel > 32768){
-                Z_accel_n = (int)(-(65535-Z_accel));
+	if(Z_accel >= 32768){
+                Z_accel_n = (int)(-(65535-Z_accel)+1);
         } else {
                 Z_accel_n = (int)Z_accel;
         }
-	if(X_rate > 32768){
-                X_rate_n = (int)(-(65535-X_rate));
+	if(X_rate >= 32768){
+                X_rate_n = (int)(-(65535-X_rate)+1);
         } else {
                 X_rate_n = (int)X_rate;
         }
-	if(Y_rate > 32768){
-                Y_rate_n = (int)(-(65535-Y_rate));
+	if(Y_rate >= 32768){
+                Y_rate_n = (int)(-(65535-Y_rate)+1);
         } else {
                 Y_rate_n = (int)Y_rate;
         }
-	if(Z_rate > 32768){
-                Z_rate_n = (int)(-(65535-Z_rate));
+	if(Z_rate >= 32768){
+                Z_rate_n = (int)(-(65535-Z_rate)+1);
         } else {
                 Z_rate_n = (int)Z_rate;
         }
 
-//	SEGGER_RTT_printf(0, "\rX_accel is %04x, Y_accel is %04x, Z_accel is %04x\n", X_accel, Y_accel, Z_accel);
-//	SEGGER_RTT_printf(0, "\rX_accel is %d, Y_accel is %d, Z_accel is %d\n", X_accel_n, Y_accel_n, Z_accel_n);
+/* Previously used to print intermediate values. No longer used.
+	SEGGER_RTT_printf(0, "\rX_accel is %04x, Y_accel is %04x, Z_accel is %04x\n", X_accel, Y_accel, Z_accel);
+	SEGGER_RTT_printf(0, "\rX_accel is %d, Y_accel is %d, Z_accel is %d\n", X_accel_n, Y_accel_n, Z_accel_n);
+	SEGGER_RTT_printf(0, "\rX_rate is %d, Y_rate is %d, Z_rate is %d\n", X_rate_n, Y_rate_n, Z_rate_n); */
 
-	/* Convert gyroscope readings to degrees per second SCALED BY 100 to allow integer printing with decent precision*/
-	int X_rate_final = X_rate_n*1000/1311; // Scale factor of 131.072
-	int Y_rate_final = Y_rate_n*1000/1311;
-	int Z_rate_final = Z_rate_n*1000/1311;
+/* Convert gyroscope readings to degrees per second, assuming full scale range of +- 250 degrees/s from datasheet and 0x1B register reading*/
+	float X_rate_final = (float)X_rate_n/131.072; // Scale factor of 131.072
+	float Y_rate_final = (float)Y_rate_n/131.072;
+	float Z_rate_final = (float)Z_rate_n/131.072;
 	
-//	SEGGER_RTT_printf(0, "\rX_rate in hex is %04x", X_rate);
-//	SEGGER_RTT_printf(0, "\rX_rate in deg/s is %d\n", X_rate_final);
+/*Previously used to print intermediate values. No longer used.
+	SEGGER_RTT_printf(0, "\rX_rate in hex is %04x", X_rate);
+	SEGGER_RTT_printf(0, "\rX_rate in deg/s is %d\n", (int)X_rate_final); */
 
-	/* Find estimated tilt from accelerometer*/
+/* Find estimated tilt from accelerometer*/
 	double x_rot = atan2((double)(-Y_accel_n), sqrt((double)(X_accel_n*X_accel_n + Z_accel_n*Z_accel_n)));
 	double y_rot = atan2((double)(X_accel_n) , sqrt((double)(Y_accel_n*Y_accel_n + Z_accel_n*Z_accel_n)));
 	
-//	int x_rotation = (int)(x_rot*100);
-//	int y_rotation = (int)(y_rot*100);
 
-//	SEGGER_RTT_printf(0, "\rX_ROT in radians is %d, Y_ROT in radians is %d\n", x_rotation, y_rotation);
+/* Previously used to print intermediate values. No longer used
+	int x_rotation = (int)(x_rot*100);
+	int y_rotation = (int)(y_rot*100);
 
-	/* Convert from radians to degrees*/	
-//	x_rotation = (int)(x_rot*572);
-//	y_rotation = (int)(y_rot*572);
+	SEGGER_RTT_printf(0, "\rX_ROT in radians is %d, Y_ROT in radians is %d\n", x_rotation, y_rotation);
+
+	// Convert from radians to degrees
+	x_rotation = (int)(x_rot*572);
+	y_rotation = (int)(y_rot*572);
 	
-	// SEGGER_RTT_printf(0, "\rX_ROT in degrees is %d\n", x_rotation);
+	SEGGER_RTT_printf(0, "\rX_ROT in degrees is %d\n", x_rotation); */
 
-	// NOW carry out Kalman filter operations
+/* NOW carry out Kalman filter operations*/
 
-	// Step 0 - declare uncertainties
-	float Q_angle = 0.001;
-	float Q_gyroBias = 0.003;
-	float R_measure = 0.03;
-	
-	float gyroRate = (float)X_rate_final/100;
-	float newAngle = (float)x_rot*57.2;
+	// Step 0 - calculate sensor readings
+	float gyroRate = X_rate_final;
+	float accAngle = (float)x_rot*57.2;
 
 	// Step 1 - predict new angle based on previous angle and gyroscope reading
-	float rate = gyroRate - bias;
-	angle += dt*rate;
+	float rate = gyroRate - state_bias;
+	state_angle += dt*rate;
 
 	// Step 2 - update P
 	P[0][0] = dt*(dt*P[1][1] - P[0][1] - P[1][0] + Q_angle);
@@ -1238,7 +1223,7 @@ main(void)
 	P[1][1] += Q_gyroBias*dt;
 	
 	// Step 3 - calculate innovation, the difference between prediction and reading
-	y = newAngle - angle;
+	innovation = accAngle - state_angle;
 
 	// Step 4 - update S
 	S = P[0][0] + R_measure;
@@ -1248,8 +1233,8 @@ main(void)
 	K[1] = P[1][0]/S;
 
 	// Step 6 - update angle and bias based on Kalman gain and innovation
-	angle += K[0]*y;
-	bias += K[1]*y;
+	state_angle += K[0]*innovation;
+	state_bias += K[1]*innovation;
 
 	// Step 7 - final update of P based on Kalman gain
 	float p00_inter = P[0][0];
@@ -1261,601 +1246,22 @@ main(void)
 	P[1][1] -= K[1]*p01_inter;
 	
 	// Print readings
-	int angle_int = (int)(angle);
-	int angle_reading_int = (int)(x_rot*57.2);
-	int bias_int = (int)(bias);
+	int angle_int = (int)(state_angle);
+	int angle_reading_int = (int)(accAngle);
+	int bias_int = (int)(state_bias);
+
+//	int p00 = (int)(P[0][0]*100); int p01 = (int)(P[0][1]*100); int p10 = (int)(P[1][0]*100); int p11 = (int)(P[1][1]*100);
+
 	SEGGER_RTT_printf(0, "\rAngle reading = %d, Angle estimate = %d, Bias estimate = %d\n", angle_reading_int, angle_int, bias_int);
+
+//	SEGGER_RTT_printf(0, "\rP = [%d , %d], [%d , %d]\n", p00, p01, p10, p11);
+
 	}
 
 	disableI2Cpins();
-	//}
 
 	while (1)
-	{
-		//SEGGER_RTT_WriteString(0, "Finally in the loop");
-		/*
-		 *	Do not, e.g., lowPowerPinStates() on each iteration, because we actually
-		 *	want to use menu to progressiveley change the machine state with various
-		 *	commands.
-		 */
-		/*
-		SEGGER_RTT_WriteString(0, "\r\n\n\n\n[ *\t\t\t\tW\ta\tr\tp\t(rev. b)\t\t\t* ]\n");
-		SEGGER_RTT_WriteString(0, "\r[  \t\t\t\t    Cambridge / Physcomplab / PSM\t\t\t\t  ]\n\n");
-		
-		SEGGER_RTT_printf(0, "\r\tSupply=%dmV,\tDefault Target Read Register=0x%02x\n",
-								menuSupplyVoltage, menuRegisterAddress);
-		SEGGER_RTT_printf(0, "\r\tI2C=%dkb/s,\tSPI=%dkb/s,\tUART=%dkb/s,\tI2C Pull-Up=%d\n\n",
-								gWarpI2cBaudRateKbps, gWarpSpiBaudRateKbps, gWarpUartBaudRateKbps, menuI2cPullupValue);
-
-		SEGGER_RTT_printf(0, "\r\tSIM->SCGC6=0x%02x\t\tRTC->SR=0x%02x\t\tRTC->TSR=0x%02x\n", SIM->SCGC6, RTC->SR, RTC->TSR);
-		SEGGER_RTT_printf(0, "\r\tMCG_C1=0x%02x\t\t\tMCG_C2=0x%02x\t\tMCG_S=0x%02x\n", MCG_C1, MCG_C2, MCG_S);
-		SEGGER_RTT_printf(0, "\r\tMCG_SC=0x%02x\t\t\tMCG_MC=0x%02x\t\tOSC_CR=0x%02x\n", MCG_SC, MCG_MC, OSC_CR);
-		SEGGER_RTT_printf(0, "\r\tSMC_PMPROT=0x%02x\t\t\tSMC_PMCTRL=0x%02x\t\tSCB->SCR=0x%02x\n", SMC_PMPROT, SMC_PMCTRL, SCB->SCR);
-		SEGGER_RTT_printf(0, "\r\tPMC_REGSC=0x%02x\t\t\tSIM_SCGC4=0x%02x\n\n", PMC_REGSC, SIM_SCGC4);
-
-		SEGGER_RTT_printf(0, "\r\t%ds in RTC Handler to-date,\t%d Pmgr Errors\n", gWarpSleeptimeSeconds, powerManagerCallbackStructure.errorCount);
-
-		SEGGER_RTT_WriteString(0, "\rSelect:\n");
-		SEGGER_RTT_WriteString(0, "\r- 'a': set default sensor.\n");
-		SEGGER_RTT_WriteString(0, "\r- 'b': set I2C baud rate.\n");
-		SEGGER_RTT_WriteString(0, "\r- 'c': set SPI baud rate.\n");
-		SEGGER_RTT_WriteString(0, "\r- 'd': set UART baud rate.\n");
-		SEGGER_RTT_WriteString(0, "\r- 'e': set default register address.\n");
-		SEGGER_RTT_WriteString(0, "\r- 'f': write byte to sensor.\n");
-		SEGGER_RTT_WriteString(0, "\r- 'g': set default SSSUPPLY.\n");
-		SEGGER_RTT_WriteString(0, "\r- 'h': powerdown command to all sensors.\n");
-		SEGGER_RTT_WriteString(0, "\r- 'i': set pull-up enable value.\n");
-		SEGGER_RTT_printf(0, "\r- 'j': repeat read reg 0x%02x on sensor #%d.\n", menuRegisterAddress, menuTargetSensor);
-		SEGGER_RTT_WriteString(0, "\r- 'k': sleep until reset.\n");
-		SEGGER_RTT_WriteString(0, "\r- 'l': send repeated byte on I2C.\n");
-		SEGGER_RTT_WriteString(0, "\r- 'm': send repeated byte on SPI.\n");
-		SEGGER_RTT_WriteString(0, "\r- 'n': enable SSSUPPLY.\n");
-		SEGGER_RTT_WriteString(0, "\r- 'o': disable SSSUPPLY.\n");
-		SEGGER_RTT_WriteString(0, "\r- 'p': switch to VLPR mode.\n");
-		SEGGER_RTT_WriteString(0, "\r- 'r': switch to RUN mode.\n");
-		SEGGER_RTT_WriteString(0, "\r- 's': power up all sensors.\n");
-		SEGGER_RTT_WriteString(0, "\r- 't': dump processor state.\n");
-		SEGGER_RTT_WriteString(0, "\r- 'x': disable SWD and spin for 10 secs.\n");
-		SEGGER_RTT_WriteString(0, "\rEnter selection> ");
-
-		key = SEGGER_RTT_WaitKey();
-
-		switch (key)
-		{
-		
-			case 'a':
-			{
-				SEGGER_RTT_WriteString(0, "\r\tSelect:\n");
-				SEGGER_RTT_WriteString(0, "\r\t- '1' ADXL362			(0x00--0x2D): 1.6V  -- 3.5V\n");
-				SEGGER_RTT_WriteString(0, "\r\t- '2' BMX055accel		(0x00--0x3F): 2.4V  -- 3.6V\n");
-				SEGGER_RTT_WriteString(0, "\r\t- '3' BMX055gyro		(0x00--0x3F): 2.4V  -- 3.6V\n");
-				SEGGER_RTT_WriteString(0, "\r\t- '4' BMX055mag			(0x40--0x52): 2.4V  -- 3.6V\n");
-				SEGGER_RTT_WriteString(0, "\r\t- '5' MMA8451Q			(0x00--0x31): 1.95V -- 3.6V\n");
-				SEGGER_RTT_WriteString(0, "\r\t- '6' LPS25H			(0x08--0x24): 1.7V  -- 3.6V\n");
-				SEGGER_RTT_WriteString(0, "\r\t- '7' MAG3110			(0x00--0x11): 1.95V -- 3.6V\n");
-				SEGGER_RTT_WriteString(0, "\r\t- '8' HDC1000			(0x00--0x1F): 3.0V  -- 5.0V\n");
-				SEGGER_RTT_WriteString(0, "\r\t- '9' SI7021			(0x00--0x0F): 1.9V  -- 3.6V\n");
-				SEGGER_RTT_WriteString(0, "\r\t- 'a' L3GD20H			(0x0F--0x39): 2.2V  -- 3.6V\n");
-				SEGGER_RTT_WriteString(0, "\r\t- 'b' BME680			(0xAA--0xF8): 1.6V  -- 3.6V\n");
-				SEGGER_RTT_WriteString(0, "\r\t- 'd' TCS34725			(0x00--0x1D): 2.7V  -- 3.3V\n");
-				SEGGER_RTT_WriteString(0, "\r\t- 'e' SI4705			(n/a):        2.7V  -- 5.5V\n");
-				SEGGER_RTT_WriteString(0, "\r\t- 'f' PAN1326			(n/a)\n");
-				SEGGER_RTT_WriteString(0, "\r\t- 'g' CCS811			(0x00--0xFF): 1.8V  -- 3.6V\n");
-				SEGGER_RTT_WriteString(0, "\r\t- 'h' AMG8834			(0x00--?): ?V  -- ?V\n");
-				SEGGER_RTT_WriteString(0, "\r\t- 'j' AS7262			(0x00--0x2B): 2.7V -- 3.6V\n");
-				SEGGER_RTT_WriteString(0, "\r\t- 'k' AS7263			(0x00--0x2B): 2.7V -- 3.6V\n");
-				SEGGER_RTT_WriteString(0, "\r\t- 'l' INA219			(0x04) \n");
-				SEGGER_RTT_WriteString(0, "\r\tEnter selection> ");
-
-				key = SEGGER_RTT_WaitKey();
-
-				switch(key)
-				{
-					case '1':
-					{
-						menuTargetSensor = kWarpSensorADXL362;
-
-						break;
-					}
-
-					case '2':
-					{
-						menuTargetSensor = kWarpSensorBMX055accel;
-
-						break;
-					}
-
-					case '3':
-					{
-						menuTargetSensor = kWarpSensorBMX055gyro;
-
-						break;
-					}
-
-					case '4':
-					{
-						menuTargetSensor = kWarpSensorBMX055mag;
-
-						break;
-					}
-
-					case '5':
-					{
-						menuTargetSensor = kWarpSensorMMA8451Q;
-
-						break;
-					}
-
-					case '6':
-					{
-						menuTargetSensor = kWarpSensorLPS25H;
-
-						break;
-					}
-
-					case '7':
-					{
-						menuTargetSensor = kWarpSensorMAG3110;
-
-						break;
-					}
-
-					case '8':
-					{
-						menuTargetSensor = kWarpSensorHDC1000;
-
-						break;
-					}
-
-					case '9':
-					{
-						menuTargetSensor = kWarpSensorSI7021;
-
-						break;
-					}
-
-					case 'a':
-					{
-						menuTargetSensor = kWarpSensorL3GD20H;
-
-						break;
-					}
-
-					case 'b':
-					{
-						menuTargetSensor = kWarpSensorBME680;
-
-						break;
-					}
-
-					case 'd':
-					{
-						menuTargetSensor = kWarpSensorTCS34725;
-
-						break;
-					}
-
-					case 'e':
-					{
-						menuTargetSensor = kWarpSensorSI4705;
-
-						break;
-					}
-
-					case 'f':
-					{
-						menuTargetSensor = kWarpSensorPAN1326;
-
-						break;
-					}
-
-					case 'g':
-					{
-						menuTargetSensor = kWarpSensorCCS811;
-
-						break;
-					}
-
-					case 'h':
-					{
-						menuTargetSensor = kWarpSensorAMG8834;
-
-						break;
-					}
-
-					case 'j':
-					{
-						menuTargetSensor = kWarpSensorAS7262;
-
-						break;
-					}
-
-					case 'k':
-					{
-						menuTargetSensor = kWarpSensorAS7263;
-
-						break;
-					}
-					
-					case 'l':
-					{
-						menuTargetSensor = kWarpSensorINA219;
-
-						break;
-					}
-
-					default:
-					{
-						SEGGER_RTT_printf(0, "\r\tInvalid selection '%c' !\n", key);
-					}
-				}
-
-				break;
-			}
-
-		
-		//	 *	Change default I2C baud rate
-		
-			case 'b':
-			{
-				SEGGER_RTT_WriteString(0, "\r\n\tSet I2C baud rate in kbps (e.g., '0001')> ");
-				gWarpI2cBaudRateKbps = read4digits();
-
-		
-	//		 *	Round 9999kbps to 10Mbps
-
-				if (gWarpI2cBaudRateKbps == 9999)
-				{
-					gWarpI2cBaudRateKbps = 10000;
-				}
-
-				SEGGER_RTT_printf(0, "\r\n\tI2C baud rate set to %d kb/s", gWarpI2cBaudRateKbps);
-
-				break;
-			}
-
-			
-			// *	Change default SPI baud rate
-			
-			case 'c':
-			{
-				SEGGER_RTT_WriteString(0, "\r\n\tSet SPI baud rate in kbps (e.g., '0001')> ");
-				gWarpSpiBaudRateKbps = read4digits();
-
-				
-				 //	Round 9999kbps to 10Mbps
-				 
-				if (gWarpSpiBaudRateKbps == 9999)
-				{
-					gWarpSpiBaudRateKbps = 10000;
-				}
-
-				SEGGER_RTT_printf(0, "\r\n\tSPI baud rate: %d kb/s", gWarpSpiBaudRateKbps);
-
-				break;
-			}
-
-			
-			 //	Change default UART baud rate
-			
-			case 'd':
-			{
-				SEGGER_RTT_WriteString(0, "\r\n\tSet UART baud rate in kbps (e.g., '0001')> ");
-				gWarpUartBaudRateKbps = read4digits();
-				SEGGER_RTT_printf(0, "\r\n\tUART baud rate: %d kb/s", gWarpUartBaudRateKbps);
-
-				break;
-			}
-
-			
-			// *	Set register address for subsequent operations
-			 
-			case 'e':
-			{
-				SEGGER_RTT_WriteString(0, "\r\n\tEnter 2-nybble register hex address (e.g., '3e')> ");
-				menuRegisterAddress = readHexByte();
-				SEGGER_RTT_printf(0, "\r\n\tEntered [0x%02x].\n\n", menuRegisterAddress);
-
-				break;
-			}
-
-			
-			// *	Write byte to sensor
-			 
-			case 'f':
-			{
-				uint8_t		i2cAddress, payloadByte[1], commandByte[1];
-				i2c_status_t	i2cStatus;
-				WarpStatus	status;
-	
-
-				SEGGER_RTT_WriteString(0, "\r\n\tEnter I2C addr. (e.g., '0f') or '99' for SPI > ");
-				i2cAddress = readHexByte();
-				SEGGER_RTT_printf(0, "\r\n\tEntered [0x%02x].\n", i2cAddress);
-
-
-				SEGGER_RTT_WriteString(0, "\r\n\tEnter hex byte to send (e.g., '0f')> ");
-				payloadByte[0] = readHexByte();
-				SEGGER_RTT_printf(0, "\r\n\tEntered [0x%02x].\n", payloadByte[0]);
-
-				if (i2cAddress == 0x99)
-				{
-					SEGGER_RTT_printf(0, "\r\n\tWriting [0x%02x] to SPI register [0x%02x]...\n", payloadByte[0], menuRegisterAddress);
-					status = writeSensorRegisterADXL362(	0x0A			// command == write register	,
-										menuRegisterAddress,
-										payloadByte[0]		// writeValue			
-									);
-					if (status != kWarpStatusOK)
-					{
-						SEGGER_RTT_printf(0, "\r\n\tSPI write failed, error %d.\n\n", status);
-					}
-				}
-				else
-				{
-					i2c_device_t slave =
-					{
-						.address = i2cAddress,
-						.baudRate_kbps = gWarpI2cBaudRateKbps
-					};
-
-					enableSssupply(menuSupplyVoltage);
-					enableI2Cpins(menuI2cPullupValue);
-
-					
-					// *	Wait for supply and pull-ups to settle.
-					
-					OSA_TimeDelay(1000);
-
-					commandByte[0] = menuRegisterAddress;
-					i2cStatus = I2C_DRV_MasterSendDataBlocking(
-											0,//  I2C instance 
-											&slave,
-											commandByte,
-											1,
-											payloadByte,
-											1,
-											1000);
-					if (i2cStatus != kStatus_I2C_Success)
-					{
-						SEGGER_RTT_printf(0, "\r\n\tI2C write failed, error %d.\n\n", i2cStatus);
-					}
-					disableI2Cpins();
-				}
-
-				
-				 //	NOTE: do not disable the supply here, because we typically want to build on the effect of this register write command.
-				 
-
-				break;
-			}
-
-			
-			 //	Configure default TPS82740 voltage
-			 
-			case 'g':
-			{
-				SEGGER_RTT_WriteString(0, "\r\n\tOverride SSSUPPLY in mV (e.g., '1800')> ");
-				menuSupplyVoltage = read4digits();
-				SEGGER_RTT_printf(0, "\r\n\tOverride SSSUPPLY set to %d mV", menuSupplyVoltage);
-
-				break;
-			}
-
-			
-			//	Activate low-power modes in all sensors.
-			
-			case 'h':
-			{
-				activateAllLowPowerSensorModes();
-
-				break;
-			}
-
-			
-			 //	Configure default pullup enable value
-			 
-			case 'i':
-			{
-				SEGGER_RTT_WriteString(0, "\r\n\tDefault pullup enable value in kiloOhms (e.g., '0000')> ");
-				menuI2cPullupValue = read4digits();
-				SEGGER_RTT_printf(0, "\r\n\tI2cPullupValue set to %d\n", menuI2cPullupValue);
-				
-				break;
-			}
-
-			
-			// *	Start repeated read
-			
-			case 'j':
-			{
-				bool		autoIncrement, chatty;
-				int		spinDelay, repetitionsPerAddress, chunkReadsPerAddress;
-				int		adaptiveSssupplyMaxMillivolts;
-				uint8_t		referenceByte;
-
-
-				SEGGER_RTT_printf(0, "\r\n\tAuto-increment from base address 0x%02x? ['0' | '1']> ", menuRegisterAddress);
-				autoIncrement = SEGGER_RTT_WaitKey() - '0';
-
-				SEGGER_RTT_WriteString(0, "\r\n\tChunk reads per address (e.g., '1')> ");
-				chunkReadsPerAddress = SEGGER_RTT_WaitKey() - '0';
-
-				SEGGER_RTT_WriteString(0, "\r\n\tChatty? ['0' | '1']> ");
-				chatty = SEGGER_RTT_WaitKey() - '0';
-
-				SEGGER_RTT_WriteString(0, "\r\n\tInter-operation spin delay in milliseconds (e.g., '0000')> ");
-				spinDelay = read4digits();
-
-				SEGGER_RTT_WriteString(0, "\r\n\tRepetitions per address (e.g., '0000')> ");
-				repetitionsPerAddress = read4digits();
-
-				SEGGER_RTT_WriteString(0, "\r\n\tMaximum voltage for adaptive supply (e.g., '0000')> ");
-				adaptiveSssupplyMaxMillivolts = read4digits();
-
-				SEGGER_RTT_WriteString(0, "\r\n\tReference byte for comparisons (e.g., '3e')> ");
-				referenceByte = readHexByte();
-
-				SEGGER_RTT_printf(0, "\r\n\tRepeating dev%d @ 0x%02x, reps=%d, pull=%d, delay=%dms:\n\n",
-					menuTargetSensor, menuRegisterAddress, repetitionsPerAddress, menuI2cPullupValue, spinDelay);
-
-				repeatRegisterReadForDeviceAndAddress(	menuTargetSensor,//warpSensorDevice, 
-									menuRegisterAddress, //baseAddress ,
-									menuI2cPullupValue,
-									autoIncrement,// autoIncrement
-									chunkReadsPerAddress,
-									chatty,
-									spinDelay,
-									repetitionsPerAddress,
-									menuSupplyVoltage,
-									adaptiveSssupplyMaxMillivolts,
-									referenceByte
-								);
-
-				break;
-			}
-
-			
-			// *	Sleep for 30 seconds.
-			 
-			case 'k':
-			{
-				SEGGER_RTT_WriteString(0, "\r\n\tSleeping until system reset...\n");
-				sleepUntilReset();
-
-				break;
-			}
-
-			
-			// *	Send repeated byte on I2C or SPI - have hijacked for INA current reading
-			
-			case 'l':
-			{	
-				readSensorRegisterINA219(0x01);
-				
-			}
-			case 'm':
-			{
-				uint8_t		outBuffer[1];
-				int		repetitions;
-
-				SEGGER_RTT_WriteString(0, "\r\n\tByte to send (e.g., 'F0')> ");
-				outBuffer[0] = readHexByte();
-
-				SEGGER_RTT_WriteString(0, "\r\n\tRepetitions (e.g., '0000')> ");
-				repetitions = read4digits();
-
-				if (key == 'l')
-				{
-					SEGGER_RTT_printf(0, "\r\n\tSending %d repetitions of [0x%02x] on I2C, i2cPullupEnable=%d, SSSUPPLY=%dmV\n\n",
-						repetitions, outBuffer[0], menuI2cPullupValue, menuSupplyVoltage);
-					for (int i = 0; i < repetitions; i++)
-					{
-						writeByteToI2cDeviceRegister(0xFF, true, //sedCommandByte 
-							outBuffer[0], // commandByte
-							 false, // sendPayloadByte 
-							 0, //payloadByte 
-							);
-					}
-				}
-				else
-				{
-					SEGGER_RTT_printf(0, "\r\n\tSending %d repetitions of [0x%02x] on SPI, SSSUPPLY=%dmV\n\n",
-						repetitions, outBuffer[0], menuSupplyVoltage);
-					for (int i = 0; i < repetitions; i++)
-					{
-						writeBytesToSpi(outBuffer, // payloadByte 
-							 1, 
-							// payloadLength 
-							);
-					}
-				}
-
-				break;
-			}
-
-
-			
-			// *	enable SSSUPPLY
-			
-			case 'n':
-			{
-				enableSssupply(menuSupplyVoltage);
-				break;
-			}
-
-			
-			// *	disable SSSUPPLY
-			
-			case 'o':
-			{
-				disableSssupply();
-				break;
-			}
-
-			
-			// *	Switch to VLPR
-			
-			case 'p':
-			{
-				warpSetLowPowerMode(kWarpPowerModeVLPR, 0,//  sleep seconds : irrelevant here 
-						);
-				break;
-			}
-
-			
-			// *	Switch to RUN
-			
-			case 'r':
-			{
-				warpSetLowPowerMode(kWarpPowerModeRUN, 0, // sleep seconds : irrelevant here 
-					);
-				break;
-			}
-
-			
-			// *	Power up all sensors
-			
-			case 's':
-			{
-				powerupAllSensors();
-				break;
-			}
-
-			
-			// *	Dump processor state
-			
-			case 't':
-			{
-				dumpProcessorState();
-				break;
-			}
-
-			
-			// *	Simply spin for 10 seconds. Since the SWD pins should only be enabled when we are waiting for key at top of loop (or toggling after printf), during this time there should be no interference from the SWD.
-			
-			case 'x':
-			{
-				SEGGER_RTT_WriteString(0, "\r\n\tSpinning for 10 seconds...\n");
-				OSA_TimeDelay(10000);
-				SEGGER_RTT_WriteString(0, "\r\tDone.\n\n");
-
-				break;
-			}
-
-			
-			// *	Ignore naked returns.
-			
-			case '\n':
-			{
-				SEGGER_RTT_WriteString(0, "\r\tPayloads make rockets more than just fireworks.");
-				break;
-			}
-
-			default:
-			{
-				SEGGER_RTT_printf(0, "\r\tInvalid selection '%c' !\n", key);
-			}
-		}*/
+	{//Previously warp menu
 	}
 	
 	return 0;

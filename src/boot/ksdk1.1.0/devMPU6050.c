@@ -33,7 +33,7 @@ void initMPU6050(const uint8_t i2cAddress, WarpI2CDeviceState volatile * deviceS
 }
 
 WarpStatus readSensorRegisterMPU6050(uint8_t deviceRegister){
-	uint8_t         txBuf[1]        = {0x00};
+	uint8_t         txBuf[2]        = {0x6B, 0x0}; // This is the power management register address and byte to send to it
 	uint8_t		cmdBuf[1]	= {0xFF};
 	i2c_status_t	returnValue;	
 
@@ -43,42 +43,31 @@ WarpStatus readSensorRegisterMPU6050(uint8_t deviceRegister){
 		.baudRate_kbps = gWarpI2cBaudRateKbps
 	};
 
-	cmdBuf[0] = 0x6B;
-	// Set the power management register
-	
+	// Set the power management register to make sure the MPU is not in sleep mode.
 	returnValue = I2C_DRV_MasterSendDataBlocking(
                                                         0 /* I2C peripheral instance */,
                                                         &slave,
-                                                        cmdBuf,
-                                                        1,
+                                                        NULL,
+                                                        0,
                                                         txBuf,
-                                                        1,
+                                                        2,
                                                         500 /* Timeout in ms*/);
 	
-	// First write a 1i to the relevant register
+	
 	cmdBuf[0] = deviceRegister;
-	txBuf[0]  = 0x01;
-	returnValue = I2C_DRV_MasterSendDataBlocking(
+	// Then read from register
+	returnValue = I2C_DRV_MasterReceiveDataBlocking(
 							0 /* I2C peripheral instance */,
 							&slave,
 							cmdBuf,
 							1,
-							txBuf,
-							1,
-							500 /* Timeout in ms*/);
-	// Then read from said register
-	returnValue = I2C_DRV_MasterReceiveDataBlocking(
-							0 /* I2C peripheral instance */,
-							&slave,
-							NULL,
-							0,
 							(uint8_t *)deviceMPU6050State.i2cBuffer,
 							1,
 							500 /*timeout in ms*/);
 	
 	if (returnValue == kStatus_I2C_Success)
 	{
-		SEGGER_RTT_printf(0, "\r[0x%02x]	0x%02x 0x%02x\n", cmdBuf[0], deviceMPU6050State.i2cBuffer[1], deviceMPU6050State.i2cBuffer[0]);
+//		SEGGER_RTT_printf(0, "\r[0x%02x] 	0x%02x\n", cmdBuf[0], deviceMPU6050State.i2cBuffer[0]);
 	}
 	else
 	{
@@ -87,56 +76,29 @@ WarpStatus readSensorRegisterMPU6050(uint8_t deviceRegister){
 		SEGGER_RTT_WriteString(0, "Didn't work\n");
 		return 0xFF;
 	}
-
+	
+	// Return register contents
 	return deviceMPU6050State.i2cBuffer[0];
 }
 
 WarpStatus writeSensorRegisterMPU6050(uint8_t deviceRegister, uint8_t register_data){ /* Write function for configuration of accel and gyro*/
 	uint8_t 	cmdBuf[1]	= {0xFF};
-	uint8_t		txBuf[1]	= {0x00};
+	uint8_t		txBuf[2]	= {deviceRegister, register_data};
 	i2c_status_t			returnValue;
-
 	i2c_device_t slave = 
 	{
 		.address = deviceMPU6050State.i2cAddress,
 		.baudRate_kbps = gWarpI2cBaudRateKbps
 	};
-	
-        cmdBuf[0] = 0x6B;
-	// Set the power management register
-
-        returnValue = I2C_DRV_MasterSendDataBlocking(
-                                                        0 /* I2C peripheral instance */,
-                                                        &slave,
-                                                        cmdBuf,
-                                                        1,
-                                                        txBuf,
-                                                        1,
-                                                        500 /* Timeout in ms*/);
-
-        // First write a 1 to the relevant register
-        cmdBuf[0] = deviceRegister;
-        txBuf[0]  = 0x01;
-        returnValue = I2C_DRV_MasterSendDataBlocking(
-                                                        0 /* I2C peripheral instance */,
-                                                        &slave,
-                                                        cmdBuf,
-                                                        1,
-                                                        txBuf,
-                                                        1,
-                                                        500 /* Timeout in ms*/);
-
-	cmdBuf[0] = deviceRegister;
-	txBuf[0] = register_data;
 	returnValue = I2C_DRV_MasterSendDataBlocking(
-							0 /*I2C peripheral instance*/,
-							&slave,
-							NULL,
-							0,
-							txBuf,
-							1,
-							100 /*timeout in ms*/);	
-
+                                                        0 /* I2C peripheral instance */,
+                                                        &slave,
+                                                        NULL,
+                                                        0,
+                                                        txBuf,
+                                                        2,
+                                                        500 /* Timeout in ms*/);
+	
 	if (returnValue == kStatus_I2C_Success)
 	{
 		SEGGER_RTT_printf(0, "\r[0x%02x]  0x%02x\n", cmdBuf[0], txBuf[0]);
