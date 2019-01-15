@@ -27,6 +27,6 @@ For Kalman filter understanding this [link](http://robotsforroboticists.com/kalm
 
 For scaled integers this [link](http://microchipdeveloper.com/c:scaled-integers) gives a good explanation for why they may be used instead of floating point types. In this project, they were utilised to print intermediate values.
 
-For C implementation this [blog post](http://blog.tkjelectronics.dk/2012/09/a-practical-approach-to-kalman-filter-and-how-to-implement-it/) t was very useful. It was found at the latter stages of the project and helped considerably in tidying up the Kalman filter code.
+For C implementation this [blog post](http://blog.tkjelectronics.dk/2012/09/a-practical-approach-to-kalman-filter-and-how-to-implement-it/) was very useful. It was found at the latter stages of the project and helped considerably in tidying up the Kalman filter code.
 
 Finally thanks to Phillip Stanley-Marbell, whose [Warp firmware](https://github.com/physical-computation/Warp-firmware) this repository was forked from. I have just learned to write a Markdown README file.
