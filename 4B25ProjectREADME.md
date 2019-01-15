@@ -19,3 +19,12 @@ The required hardware is:
 * 1 x Breadboard
 * 5 x Male to male jumper wires
 * 1 x USB mini to USB A cable for laptop connection (if printed output)
+
+#Acknowledgements
+The following websites were found to be very useful for this project:
+
+For [Kalman filter understanding](http://robotsforroboticists.com/kalman-filtering) this link gives an excellent introduction.
+
+For [scaled integers](http://microchipdeveloper.com/c:scaled-integers) this link gives a good explanation for why they may be used instead of floating point types. In this project, they were utilised to print intermediate values.
+
+For [C implementation](http://blog.tkjelectronics.dk/2012/09/a-practical-approach-to-kalman-filter-and-how-to-implement-it/) this blog post was very useful. It was found at the latter stages of the project and helped considerably in tidying up the Kalman filter code.
